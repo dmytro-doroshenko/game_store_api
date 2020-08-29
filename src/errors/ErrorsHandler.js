@@ -1,10 +1,10 @@
 module.exports = class ErrorsHandler extends Error {
-    constructor(message, status, customErrorCode) {
-        super(message);
+  constructor(message, status, customErrorCode) {
+    super(message);
 
-        this.status = status;
-        this.customErrorCode = customErrorCode;
+    this.status = status;
+    this.customErrorCode = customErrorCode;
 
-        Error.captureStackTrace(this, this.constructor);
-    };
+    Error.captureStackTrace(this, this.constructor);
+  }
 };

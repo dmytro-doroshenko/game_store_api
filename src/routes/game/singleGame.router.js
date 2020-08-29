@@ -1,17 +1,16 @@
 const { Router } = require('express');
 
-const { gameController } = require('../../controllers');
+const { singleGameController } = require('../../controllers');
+const { gameToUpdateValidatorMiddleware, newGameValidatorMiddleware } = require('../../middlewares');
 
-const { addNewGame, deleteGame, getAllGames, getGameById, getGameByParams, updateGame } = gameController;
+const { addNewGame, deleteGame, getGameById, updateGame } = singleGameController;
 
 const singleGameRouter = Router();
 
-singleGameRouter.get('/', getAllGames);
 singleGameRouter.get('/:id', getGameById);
-singleGameRouter.get('/games', getGameByParams);
 
 singleGameRouter.post('/:id/delete', deleteGame);
-singleGameRouter.post('/:id/update', updateGame);
-singleGameRouter.post('/add', addNewGame);
+singleGameRouter.post('/:id/update', gameToUpdateValidatorMiddleware, updateGame);
+singleGameRouter.post('/add', newGameValidatorMiddleware, addNewGame);
 
 module.exports = singleGameRouter;

@@ -1,45 +1,49 @@
-const { config } = require('../config');
 const connection = require('../db');
 const { dbDataProcessor } = require('../helpers');
 
-const gamesTable = config.GAMES_TABLE;
-
 module.exports = {
-  addNewGame: async (gameData) => {
+  addNewInstance: async (tableName, gameData) => {
     const [names, values] = await dbDataProcessor.dataToCreate(gameData);
 
-    await connection.query(`INSERT INTO ${gamesTable} (${names}) VALUES (${values})`);
+    await connection.query(`INSERT INTO ${tableName} (${names}) VALUES (${values})`);
   },
 
-  deleteGame: async (id) => {
-    await connection.query(`DELETE FROM ${gamesTable} WHERE id='${id}'`);
+  deleteInstanceById: async (tableName, id) => {
+    const [result] = await connection.query(`DELETE FROM ${tableName} WHERE id='${id}'`);
+
+    return {
+      isDeleted: result.affectedRows,
+    };
   },
 
-  getAllGames: async () => {
-    const [results] = await connection.query(`SELECT * FROM ${gamesTable}`);
+  getAllInstances: async (tableName) => {
+    const [results] = await connection.query(`SELECT * FROM ${tableName}`);
 
     return results;
   },
 
-  getGameById: async (id) => {
-    const [result] = await connection.query(`SELECT * FROM ${gamesTable} WHERE id='${id}'`);
+  getInstanceById: async (tableName, id) => {
+    const [result] = await connection.query(`SELECT * FROM ${tableName} WHERE id='${id}'`);
 
     return result;
   },
 
-  getInstancesByParams: async (params) => {
+  getInstancesByParams: async (tableName, params) => {
     const conditions = await dbDataProcessor.paramsForSelect(params);
 
-    console.log('cond', conditions);
+    const [results] = await connection.query(`SELECT * FROM ${tableName} WHERE ${conditions}`);
 
-    const [result] = await connection.query(`SELECT * FROM ${gamesTable} WHERE ${conditions}`);
-
-    return result;
+    return results;
   },
 
-  updateGame: async (id, newData) => {
+  updateInstanceById: async (tableName, id, newData) => {
     const data = await dbDataProcessor.dataToUpdate(newData);
 
-    await connection.query(`UPDATE ${gamesTable} SET ${data} WHERE id='${id}'`);
+    const [result] = await connection.query(`UPDATE ${tableName} SET ${data} WHERE id='${id}'`);
+
+    return {
+      found: result.affectedRows,
+      updated: result.changedRows,
+    };
   },
 };

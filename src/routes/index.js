@@ -1,13 +1,7 @@
-const classRouter = require('./school/class.router');
-const lessonRouter = require('./school/lesson.router');
-const studentRouter = require('./school/student.router');
-const subjectRouter = require('./school/subject.router');
-const teacherRouter = require('./school/teacher.router');
+const gamesRouter = require('./game/games.router');
+const singleGameRouter = require('./game/singleGame.router');
 
 module.exports = {
-    classRouter,
-    lessonRouter,
-    studentRouter,
-    subjectRouter,
-    teacherRouter
+  gamesRouter,
+  singleGameRouter,
 };

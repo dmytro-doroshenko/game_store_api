@@ -1,0 +1,21 @@
+GameStore API
+Description
+Create API that will provide the possibility to manage list of games in online game store.
+
+Required endpoints:
+Add game to to store |POST| /game/add
+Update game details |POST| /game/{id}/update
+Delete game from store |POST| /game/{id}/delete
+Get games by filter in query parameters or body (if filter is empty get all) |GET| /games
+Get book details |GET| /game/{id}
+GameTable
+id - int(11) PRIMARY KEY
+name - varchar(128)
+description - text
+rating - tinyint
+Requirements
+Use MySQL as database
+Do not use orm (only db driver)
+You are free to implement this however you want, use any framework or none. Build the best structure you can.
+
+After you finished upload your solution on a remote repository (GitHub/GitLab) and make it public. Send as the link afterwards.

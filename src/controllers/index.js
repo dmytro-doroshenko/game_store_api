@@ -1,13 +1,7 @@
-const classController = require('./class.controller');
-const lessonController = require('./lesson.controller');
-const studentController = require('./student.controller');
-const subjectController = require('./subject.controller');
-const teacherController = require('./teacher.controller');
+const gamesController = require('./games.controller');
+const singleGameController = require('./singleGame.controller');
 
 module.exports = {
-    classController,
-    lessonController,
-    studentController,
-    subjectController,
-    teacherController
+  gamesController,
+  singleGameController,
 };

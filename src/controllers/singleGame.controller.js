@@ -1,64 +1,85 @@
-const { gameService } = require('../services');
+const { config } = require('../config');
+const { errors, httpStatusCodes } = require('../constants');
+const ErrorsHandler = require('../errors/ErrorsHandler');
+const { dataBaseService } = require('../services');
+
+const gamesTable = config.GAMES_TABLE;
 
 module.exports = {
   addNewGame: async (req, res) => {
     try {
       const game = req.body;
 
-      await gameService.addNewGame(game);
+      await dataBaseService.addNewInstance(gamesTable, game);
 
-      res.send('ok');
+      return res.sendStatus(httpStatusCodes.CREATED);
     } catch (e) {
       console.log(e);
-      res.end();
+      return res.json(e.message);
     }
   },
 
-  deleteGame: async (req, res) => {
+  deleteGame: async (req, res, next) => {
     try {
       const { id } = req.params;
 
-      await gameService.deleteGame(id);
+      const { isDeleted } = await dataBaseService.deleteInstanceById(gamesTable, id);
 
-      res.send('ok');
+      if (!isDeleted) {
+        return next(new ErrorsHandler(
+          errors.GAME_NOT_FOUND.message(id),
+          httpStatusCodes.NOT_FOUND,
+          errors.GAME_NOT_FOUND.code,
+        ));
+      }
+
+      return res.sendStatus(httpStatusCodes.OK);
     } catch (e) {
       console.log(e);
-      res.end();
+      return res.json(e.message);
     }
   },
 
-  getAllGames: async (req, res) => {
-    const result = await gameService.getAllGames();
-
-    res.send(result);
-  },
-
   getGameById: async (req, res) => {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    const result = await gameService.getGameById(id);
+      const result = await dataBaseService.getInstanceById(gamesTable, id);
 
-    res.json(result);
+      return res.json(result);
+    } catch (e) {
+      console.log(e);
+      return res.json(e.message);
+    }
   },
 
-  getGameByParams: async (req, res) => {
-    const params = req.query;
-
-    console.log('par', params);
-    res.end();
-  },
-
-  updateGame: async (req, res) => {
+  updateGame: async (req, res, next) => {
     try {
       const { id } = req.params;
       const newData = req.body;
 
-      await gameService.updateGame(id, newData);
+      const { found, updated } = await dataBaseService.updateInstanceById(gamesTable, id, newData);
 
-      res.send('ok');
+      if (!found) {
+        return next(new ErrorsHandler(
+          errors.GAME_NOT_FOUND.message(id),
+          httpStatusCodes.NOT_FOUND,
+          errors.GAME_NOT_FOUND.code,
+        ));
+      }
+
+      if (!updated) {
+        return next(new ErrorsHandler(
+          errors.GAME_NOT_UPDATED.message(id),
+          httpStatusCodes.BAD_REQUEST,
+          errors.GAME_NOT_UPDATED.code,
+        ));
+      }
+
+      return res.sendStatus(httpStatusCodes.OK);
     } catch (e) {
       console.log(e);
-      res.end();
+      return res.json(e.message);
     }
   },
 };
